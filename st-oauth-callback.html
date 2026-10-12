@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SmartThings OAuth callback</title>
+<style>
+  body { font-family: -apple-system, system-ui, sans-serif; background: #0f172a; color: #e2e8f0;
+         display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+  .card { background: #1e293b; border-radius: 16px; padding: 32px; max-width: 560px; width: 90%;
+          box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+  h1 { font-size: 20px; margin: 0 0 12px; }
+  p { color: #94a3b8; font-size: 14px; line-height: 1.5; }
+  code { display: block; word-break: break-all; background: #0f172a; border: 1px solid #334155;
+         border-radius: 8px; padding: 12px; font-size: 13px; margin-top: 12px; color: #7dd3fc; }
+  .ok { color: #4ade80; } .err { color: #f87171; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 id="title">Finishing authorization…</h1>
+  <p id="msg">Reading the authorization response.</p>
+  <code id="code" style="display:none"></code>
+</div>
+<script>
+(function () {
+  var q = new URLSearchParams(window.location.search);
+  var code = q.get('code'), err = q.get('error'), state = q.get('state');
+  var title = document.getElementById('title'),
+      msg = document.getElementById('msg'),
+      box = document.getElementById('code');
+  if (code) {
+    title.innerHTML = '<span class="ok">✓ Authorized</span>';
+    msg.textContent = 'Copy this authorization code and paste it back to Muse:';
+    box.style.display = 'block';
+    box.textContent = code;
+  } else if (err) {
+    title.innerHTML = '<span class="err">✗ Authorization failed</span>';
+    msg.textContent = 'Error: ' + err + (q.get('error_description') ? ' — ' + q.get('error_description') : '') +
+      '. Please tell Muse what happened.';
+  } else {
+    msg.textContent = 'No authorization code found in the URL. If you were authorizing an app, please tell Muse.';
+  }
+  document.title = code ? 'Authorized — copy the code' : 'SmartThings OAuth callback';
+})();
+</script>
+</body>
+</html>
